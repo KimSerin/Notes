@@ -46,6 +46,11 @@ git reset --hard [commit hash번호]: 해당 commit 소스로 되돌림
 	(hard 옵션으로는 해당 commit 이후 이력을 모두 삭제)
 	(soft 옵션으로는 소스는 되돌리고 이력은 남겨둠)
 	remote repository에 반영하기 위해서는 git push -f로 강제로 push 해야 함
+git remote: 원격 저장소(remote repository) 확인
+git remote show [저장소 이름]: 특정 저장소 정보
+git remote add [저장소 이름] [주소]: 해당 주소의 저장소를 등록
+git  remote -v: 저장소 리스트 확인
+
 4. 라이센스
 MIT License: 무료, 배포가능, 소스코드 수정 가능, 2차 저작물 공개의무 없음
 Apache License: 무료, 배포가능, 소스코드 수정 가능, 2차 저작물 공개의무 없음
@@ -86,4 +91,7 @@ git commit --amend
 	안정화 되어있어야 한다.
 	통합브랜치(master 브랜치)
 	포픽브랜치(master 이외의 브랜치)
-	
+- branch 간 충돌날 경우 소스에서 직접 수정 한 뒤, master head에서 commit
+
+10. git에서 remote repository(github)관리
+

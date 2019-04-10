@@ -1,4 +1,20 @@
-2강. 예제 db 설치와 소개, 데이터베이스 관리(만들기/지우기/변경하기)
+﻿2강. 예제 db설치와 소개, 데이터베이스 관리(만들기/지우기/변경하기)
+
+- 행 + 열 -> 테이블, 테이블 + 테이블 -> 데이터베이스
+
+- 테이블 or database or 프로세저 생성 create
+- 테이블 or database or 프로세저 수정 alter
+- 테이블 or database or 프로세저 삭제 drop
+
+- sp_helpdb 데이터베이스이름: 데이터베이스의 상세 설명 보여 줌.(특수문자가 있을경우만 [] 사용)
+
+- 테이블이나 데이터베이스 수정하는데 다른데서 사용중인 경우
+: alter database [데이터베이스이름] set single_user with rollback immediate
+
+
+- 데이터베이스 이름 변경
+: sp_renamedb NameNow, NameNew
+
 - 데이타베이스 속성에서 파일 크기 변경 가능
 (크기를 줄일 때는 alter가 아닌 shrinkfile을 사용, 처음 지정한 크기 이하로는 줄어들지 않는다)
 

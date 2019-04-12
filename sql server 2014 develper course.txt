@@ -116,9 +116,14 @@ ex) ROUND(748.58, -1)	//750	//두번째 파라미터가 마이너스인 경우, 
 : stuff(해당 위치 문자 변경)
 ex) stuff('123456', 3, 2, 'abcde')	//12abcde56	//1부터 시작
 : replace(해당 문자를 찾아서 변경)(많이씀)
+: getdate(현재날짜, 시간), month(getdate())(현재 년도)(==datepart(mm,getdate))
+  , year(getdate())+1(내년), day
+: convert(varchar(30), getdate(), 9)	// 맨뒤 파라미터 값에 따라 출력 다름
+: dateadd(datepart, number, date)	//어떤파트(year or month..)에 몇만큼(number), 어떤날짜에(date) 더할건지
+: datediff(d, '76.2.5', getdate())	// 두 날짜의 차이
 
 
-4강 11시13분
+5강. select3 - where
 
 
 

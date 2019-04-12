@@ -96,9 +96,29 @@ ex) 2019.4.9 13:34:28.999 저장하면 -> 2020.0.0 00:00:00으로 저장 됨
   //사용자 정의 자료형 삭제
   //DROP TYPE과 같음
  
-  
+4강. select2 - 기초, 자료형
+- 자료형 바꾸기
+: select 1+3	//4
+: select 'a'+'b'	//ab
+: select 1+'4'	//5 //데이터 형식 우선 순위에 따라 자료형이 바뀜 int>char
+: select 'a'+'b'+4	//오류 //데이터 형식 우선 순위에 따라 int>char but a 나 b 는 int로 변환 불가
+: select 'a'+'b'+convert(char(1),4)	//암시적 형변환이 불가항 상황이므로 명시적으로 변환 //char 1자리로 변환
+: select getdate()+1	//가능, 날짜 하루 더해 짐
+: select 10/3	//3
+: select 10.0/3	//3.3333
+: select 10./3	//3.3333
+: select 10/3.	//3.3333
+: select convert(decimal(10,8),10)/3	//3.33333333
+: substring(자르기), cast(convert와 같음, ansi 사용하는 db면 다 사용가능), left
+: floor(절사, 버림), ceiling(절상, 올림), round(반올림)
+ex) ROUND(748.58, -1)	//750	//두번째 파라미터가 마이너스인 경우, 소수점 앞에서 반올림	
+: replicate(반복), reverse(거꾸로 출력)
+: stuff(해당 위치 문자 변경)
+ex) stuff('123456', 3, 2, 'abcde')	//12abcde56	//1부터 시작
+: replace(해당 문자를 찾아서 변경)(많이씀)
 
 
+4강 11시13분
 
 
 

@@ -125,6 +125,47 @@ ex) stuff('123456', 3, 2, 'abcde')	//12abcde56	//1부터 시작
 
 5강. select3 - where
 
+- 조건
+: 숫자인 경우
+ex) SELECT id, qty FROM sales WHERE qty>=50
+: 문자인 경우
+ex) SELECT id, qty FROM sales WHERE id = 'BU1032'
+: 날짜인 경우
+ex) SELECT ord_date FROM sales WHERE year(ord_date) = 1994(**성능에 나쁨)
+: NULL 확인하는 경우 '='로 비교할 수 없다
+ex) SELECT id, price FROM title WHERE price IS NULL 또는 IS NOT NULL
+
+- 정렬(**꼭 필요하지 않은 이상 사용하지 않는다. 성능에 좋지 않음)
+: ORDER BY [기준 column] (ASC/DESC) 사용하며, 뒤에 방향 생략시 defualt는 ASC
+: 기준 column 여러개 사용 가능, 여러개 사용시 asc/desc 각자 설정
+
+- 상위 몇개 출력
+: Top [갯수] 사용
+ex) SELECT TOP 6 id, qty FROM sales	// ORDER BY 사용안할시 순서 X
+     SELECT TOP 6 id, qty FROM sales ORDER BY qty DESC // 가장많이팔린 6개
+: TOP [숫자] PERCENT 사용
+ex) SELECT TOP 25 PERCENT id, qty FROM sales ORDER BY qty DESC
+	// 상위 25 퍼센트 출력
+
+- TOP 사용 시 같은 값이 여러개인 경우?
+: WITH TIES 사용
+ex) SELECT TOP 6 WITH TIES id, qty FROM sales ORDER BY qty DESC
+	// 동점인 경우 6개 이상 출력될 수 있음
+
+- 범위
+: BETWEEN [숫자] AND [숫자] 사용
+ex) SELECT id, qty FROM sales WHERE qty BETWEEN 10 AND 20 ORDER BY qty
+
+- 목록
+: [column] IN (항목, 항목, 항목...) 사용
+ex) SELECT id, qty FROM sales WHERE id IN ('BU1032', 'BU1111', 'MC3021')
+	// WHERE id = 'BU1032', id = 'BU1111', id = 'MC3021' 와 성능은 같음
+
+
+- 문자열
+
+
+
 
 
 

@@ -162,7 +162,134 @@ ex) SELECT id, qty FROM sales WHERE id IN ('BU1032', 'BU1111', 'MC3021')
 	// WHERE id = 'BU1032', id = 'BU1111', id = 'MC3021' 와 성능은 같음
 
 
-- 문자열
+- 문자열 포함 찾기
+: LIKE + 정규식 사용(ms mql이 허용하는 일부 문법)(** 앞에있는 %는 인덱스를 못쓰게 하여 성능에 아주 안좋다)
+ex) ... WHERE title LIKE '%computer%'	// 앞, 뒤에 0개 이상의 문자가 있는, computer를 포함하는 데이터
+ex) ... WHERE title LIKE '_computer%'	// computer 앞에 단 1개 문자가 오는 데이터
+ex) ... WHERE title LIKE '[a-f][abcde]'	//a부터f 사이 중 하나의 문자 + a,b,c,d,e 중 하나의 문자
+ex) ... WHERE title LIKE '[^a-f][^abcde]'	//a부터f 사이가 아닌 문자 + a,b,c,d,e 외의 문자
+
+: PATINDEX('정규포현', '문자열')(문자열에서 패턴에 해당하는 index를 리턴, 없으면 0리턴, 많이 사용 됨)
+ex) SELECT PATINDEX('%MI%', 'James Mike')	// 7리턴
+
+- 중복된 행
+: DISTINCT 사용
+ex) SELECT DISTINCT id FROM sales	// 여러번 팔린 책도 한번씩만 출력
+ex) SELECT DISTINCT a, b, c FROM sales	// a,b,c 모두 중복되지 X
+
+**컬럼을 가공하면 성능에 좋지 않다.
+ex) WHERE price * 1.1 < 20.00 대신
+	WHERE price < 20.00 / 1.1 으로 쓸 것
+
+** ... WHERE year(pubdata) = 1991 성능에 좋지 않음
+대신 ... WHERE pubdata BETWEEN '1991.1.1' AND '1991.12.31 23:59:59:998' 로 쓸 것
+
+- OR, AND 연산
+: AND가 OR 보다 우선한다
+ex) SELECT id, price FROM titles WHERE id LIKE 'BU%' OR id='1389' AND price=19.99
+	SELECT id, price FROM titles WHERE id LIKE 'BU%' OR (id='1389' AND price=19.99) 서로 같다
+	
+6강. 다이어그램, 모델링
+- 데이터 베이스에서 다이어그램 생성, foreign키(참조키)가 있다면 자동으로 생성된다.(속성[f4]에서 확인)
+- 열쇠 표시가 있는 항목이 primary키
+- 테이블 간 연결은 1:다, 또는 1:1 다이어그램 상 열쇠와 무한대 표시로 확인 가능(보통 1:다)
+- 테이블 조인할 때, 또는 하위쿼리 만들 때 필요
+
+7강. 테이블 관리1
+- 개체의 이름
+: 서버.DB.스키마.개체 가 풀네임 (해당 서버, DB에있는 경우 서버, DB, 스키마 생략가능)
+- 서버 이름 확인 방법
+: sp_helpserver 사용
+
+- 개체 이름에서 지정된 부분만 반환
+: PARSENAME('서버.DB.스키마.개체', 번호) AS '출력컬럼이름'
+ex) SELECT('localserver.master.dbo.object', 1)	//object
+	SELECT('localserver.master.dbo.object', 2)	//dbo
+	SELECT('localserver.master.dbo.object', 3)	//master
+	SELECT('localserver.master.dbo.object', 4)	//localserver
+
+- 데이터 정렬 목록
+: fn_helpcollations()(지원되는 모든 데이터 정렬의 목록 리턴)
+
+- 데이터 정렬 설정
+: collate 사용
+ex) create table a(
+		KorName char(10) collate Korean_Wansung_CI_AS
+	,	NKorName char(10) collate Korean_Wansung_CI_AS
+	,	usName char(10) collate Latin1_General_CI_AI
+)
+
+- 테이블 생성
+ex)
+CREATE TABLE tempdb.dbo.empl(
+	id INT
+,	name char(10)
+)
+
+- 테이블 변경
+ex)
+ALTER TABLE sales
+	ALTER COLUMN id CHAR(10) NOT NULL
+	//자료형 변경 시 잘림 주의
+	
+- 테이블 삭제
+DROP TABLE table_name
+
+- primary키(식별자)	//식별자를 생성하면 인덱스가 만들어진다.
+					//sp_helpindex [테이블명] 으로 확인
+ex) CREATE TABLE pk_test(
+		id INT PRIMARY KEY	//id INT constraint myPK PRIMARY KEY(이름 설정 가능)
+	)
+
+- NOT NULL 설정	
+ex) CREATE TABLE a(
+		id INT NOT NULL
+	)
+
+- 테이블 생성 후 primary key 설정
+: ALTER TABLE a
+	ADD CONSTRAINT [pk이름] PRIMARY KEY (컬럼이름)
+	
+- 컬럼 추가
+: ALTER TABLE [테이블이름]
+	ADD dept_id VARCHAR(20) NULL
+	
+- 컬럼 추가 시 default 설정
+ex) ALTER TABLE 사원
+	ADD city CHAR(10) NOT NULL DEFAULT '서울'
+	//이미 들어가 있는 데이터에 모두 '서울'이 들어감
+	//아무 값도 입력하지 않으면 '서울'이 들어감
+	
+- 테이블이 존재하는 경우만 삭제하도록
+if exists (select * from dbo.sysobjects 
+where id = object_id(N'[dbo].[테이블이름]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [dbo].[테이블이름]
+GO	
+
+8강. 테이블 관리2-제약
+- 집계함수
+ex) SELECT sum(qty) FROM sales	//qty 컬럼 값 모두 더한 값 출력
+
+- max, min
+ex) SELECT max(qty) as max, min(qty) as min FROM sales	//qty 컬럼 값의 최대, 최소
+
+- 전체 갯수
+: count(컬럼이름) 사용	(**컬럼이름 없이 모든 갯수를 사용하는 것이 성능에 좋다)
+ex) SELECT count(*) FROM titles	//모든 컬럼의 갯수
+	SELECT count(title_id) FROM titles	
+	//title_id의 갯수 출력, NULL값이 있는 경우 카운트 안 됨
+	//모든 NULL 값은 집계에서 제외 됨
+	
+- ISNULL	//NULL인 경우 처리할 때
+ex) SELECT ISNULL(3, 1)	//3
+	SELECT ISNULL(NULL, 1)	//1
+	SELECT price, ISNULL(price, 0) FROM pubs	//price가 null이면 0 출력
+	
+	
+	
+	
+	
+	
 
 
 

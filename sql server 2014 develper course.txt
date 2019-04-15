@@ -286,13 +286,73 @@ ex) SELECT ISNULL(3, 1)	//3
 	SELECT price, ISNULL(price, 0) FROM pubs	//price가 null이면 0 출력
 	
 	
+9강. select 4-join, 집계함수
+- GROUP BY
+ex) SELECT title_id, sum(qty)	//select에는 group by에 온 컬럼 또는 집계함수만 올 수 있음
+	FROM sales
+	GROUP BY title_id	//title_id로 그룹
 	
+- GROUP BY 후에 조건 추가 HAVING
+ex) SELECT title_id, sum(qty)
+	FROM sales
+	GROUP BY title_id HAVING sum(qty) >= 30	//group by 없이 having은 존재할 수 없음
+	//WHERE 보다 HAVING이 부하가 크다. 가능하면 WHERE 사용
 	
-	
-	
+- ROLLUP, CUBE
+: GROUP BY a,b,c,d라고 가정하면
+  a,b,c,d로 묶이는 그룹의 값
+  a,b,c로 묶이는 그룹의 소계
+  a,b로 묶이는 그룹의 소계
+  a로 묶이는 그룹의 소계
+  위의 소계들의 총 합계(전체합계)
+ex) SELECT type, pub_id, AVG(price)
+	FROM titles
+	GROUP BY type, pub_id
+	WITH ROLLUP
 
+: WITH CUBE a,b,c,d라고 가정하면
+  a,b,c,d로 묶이는 그룹의 값
+  a,b,c로 묶이는 그룹의 소계
+  a,b로 묶이는 그룹의 소계
+  a로 묶이는 그룹의 소계
+  b,c,d로 묶이는 그룹의 소계
+  b,c로 묶이는 그룹의 소계
+  b로 묶이는 그룹의 소계
+  c,d로 묶이는그룹의 소계
+  c로 묶이는 그룹의 소계
+  d로 묶이는 그룹의 소계
+  위의 소계들의 총 합계(전체합계)
+ex) SELECT type, pub_id, AVG(price)
+	FROM titles
+	GROUP BY type, pub_id
+	WITH CUBE
 
+: CUBE는 GROUP BY에 지정된 모든 컬럼 조합에 대한 부분 결과값들을 출력
+  ROLLUP은 a에 대한 부분 결과값만을 출력	
+  
+- GROUPING SETS
+ex) SELECT type, pub_id, AVG(price)
+	FRPM titles
+	GROUP BY type, pub_id	// type + pub_id로 그룹지어 AVG 출력
+	
+eX) SELECT type, pub_id, AVG(price)
+	FROM titles
+	GROUP BY GROUPING SETS(type, pub_id) //type별 AVG, pub_id별 AVG
+	//GROUP BY GROUPING SETS((type, pub_id), ()) //type + pub_id로 그룹지어 AVG + 전체 평균 출력
+	//GROUP BY GROUPING SETS(type, pub_id, ()) //type별 AVG, pub_id별 AVG + 전체 평균
 
+- join
+: SELECT * FROM A (INNER) JOIN B ON A.id = B.id		//A∩B
+  SELECT * FROM A LEFT (OUTER) JOIN B ON A.id = B.id		//A
+  SELECT * FROM A FULL OUTER JOIN B ON A.id = B.id	//A∪B
+  SELECT * FROM A RIGHT (OUTER) JOIN B ON A.id = B.id		//B
+  SELECT * FROM A LEFT (OUTER) JOIN B ON A.id = B.id WHERE B.id IS NULL	//A-B
+  SELECT * FROM A FULL OUTER JOIN B ON A.id = B.id WHERE A.id IS NULL OR B.id IS NULL	//A∪B-A∩B
+  SELECT * FROM A RIGHT (OUTER) JOIN B ON A.id = B.id WHERE A.id IS NULL	//B-A
+  
+  
+  9강 26분
+ 
 
 
 

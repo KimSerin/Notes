@@ -342,6 +342,7 @@ eX) SELECT type, pub_id, AVG(price)
 	//GROUP BY GROUPING SETS(type, pub_id, ()) //type별 AVG, pub_id별 AVG + 전체 평균
 
 - join
+: 정규화된 테이블을 다시 보고서 형태로 모아서 출력할 때 사용
 : SELECT * FROM A (INNER) JOIN B ON A.id = B.id		//A∩B
   SELECT * FROM A LEFT (OUTER) JOIN B ON A.id = B.id		//A
   SELECT * FROM A FULL OUTER JOIN B ON A.id = B.id	//A∪B
@@ -350,10 +351,21 @@ eX) SELECT type, pub_id, AVG(price)
   SELECT * FROM A FULL OUTER JOIN B ON A.id = B.id WHERE A.id IS NULL OR B.id IS NULL	//A∪B-A∩B
   SELECT * FROM A RIGHT (OUTER) JOIN B ON A.id = B.id WHERE A.id IS NULL	//B-A
   
-  
-  9강 26분
- 
+: 두 테이블 join 시 각각의 private key 중 하나는 참조키가 된다.
 
+ex)	//현재 사용하지 않는 문법
+	SELECT title, price, pub_name
+	FROM titles, publishers
+	WHERE titles.pub_id = publishers.pub_id
+	
+	//다음과 같이 써야함
+	SELECT title, price, pub_name
+	FROM titles
+		JOIN publishers ON titles.pub_id = publishers.pub_id	//INNER 생략
+		
+
+	
+9강 36분
 
 
 

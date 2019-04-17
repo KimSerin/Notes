@@ -360,13 +360,39 @@ ex)	//현재 사용하지 않는 문법
 	
 	//다음과 같이 써야함
 	SELECT title, price, pub_name
-	FROM titles
+	FROM titles		//titles, publishers 순서 상관 X
 		JOIN publishers ON titles.pub_id = publishers.pub_id	//INNER 생략
 		
-
+	//테이블 3개 join
+	SELECT title, pub_name, qty
+	FROM publishers
+		JOIN titles ON titles.pub_id = publishers.pub_id
+		JOIN sales ON sales.title_id = titles.title_id
+		
+	//alias 별칭 사용
+	SELECT title, pub_name, qty
+	FROM publishers p
+		JOIN titles t ON t.pub_id = p.pub_id
+		JOIN sales s ON s.title_id = t.title_id
+		
+- CROSS JOIN
+: 상호 조인이라고도 불림. 한 쪽 테이블의 모든 행들과 다른 테이블의 모든 행을 조인(잘안씀)
+ex) SELECT title, price, stor_id
+	FROM titles CROSS JOIN sales
 	
-9강 36분
-
+	//CROSS JOIN과 같음(WHERE 절이 없음, 성능에 좋지 않다)
+	SELECT title, price, stor_id
+	FROM titles, sales
+	
+- SELF JOIN
+: 원하는 데이터들이 한 테이블에 있을 때 사용(별칭 사용)
+ex) 한 책에 여러 작가가 있는 경우
+	titleauthor 테이블의 컬럼이 au_id, title_id, au_ord, royaltyper 일 때,
+	titld_id 작가1, 작가2 로 출력하려고 함
+	SELECT a. title_id, a.au_id, b.au_id
+	FROM titleauthor a
+		JOIN titleauthor b ON a.title_id = b.title_id
+	WHERE a.au_id < b.au_id
 
 
 
